@@ -1777,7 +1777,6 @@ end)
 
 
 local hasActivated = false  -- Variável para garantir que o FPS counter seja ativado apenas uma vez
-local screenGui  -- Variável para armazenar o ScreenGui do FPS Counter
 
 local function activateFPSCounter()
     if not hasActivated then  -- Verifica se o FPS counter já foi ativado
@@ -1790,7 +1789,7 @@ local function activateFPSCounter()
         end
 
         -- Criar um ScreenGui em CoreGui
-        screenGui = Instance.new("ScreenGui")
+        local screenGui = Instance.new("ScreenGui")
         screenGui.Name = "FPSCounter"  -- Define um nome único para o ScreenGui
         screenGui.Parent = coreGui
 
@@ -1826,17 +1825,6 @@ end
 
 -- Chama a função para ativar o FPS counter
 activateFPSCounter()
-
--- Monitorar a destruição de OrionLib
-local OrionLib = game:GetService("ReplicatedStorage"):FindFirstChild("OrionLib") -- Altere o caminho se necessário
-if OrionLib then
-    OrionLib.Destroying:Connect(function()
-        if screenGui then
-            screenGui:Destroy()  -- Destrói o ScreenGui do FPS Counter
-        end
-    end)
-end
-
 
 
 
