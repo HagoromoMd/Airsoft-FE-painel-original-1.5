@@ -1776,6 +1776,68 @@ end)
 
 
 
+local hasActivated = false  -- Variável para garantir que o FPS counter seja ativado apenas uma vez
+local screenGui  -- Variável para armazenar o ScreenGui do FPS Counter
+
+local function activateFPSCounter()
+    if not hasActivated then  -- Verifica se o FPS counter já foi ativado
+        hasActivated = true  -- Marca como ativado para que não possa ser ativado novamente
+
+        -- Verifica se já existe um ScreenGui com o nome "FPSCounter"
+        local coreGui = game:GetService("CoreGui")
+        if coreGui:FindFirstChild("FPSCounter") then
+            return  -- Sai da função se já existe um FPS Counter
+        end
+
+        -- Criar um ScreenGui em CoreGui
+        screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "FPSCounter"  -- Define um nome único para o ScreenGui
+        screenGui.Parent = coreGui
+
+        -- Criar um TextLabel para mostrar o FPS
+        local fpsLabel = Instance.new("TextLabel")
+        fpsLabel.Size = UDim2.new(0.3, 0, 0.1, 0)  -- Tamanho do label
+        fpsLabel.Position = UDim2.new(0.7, 0, 0.1, 0)  -- Posição no canto direito
+        fpsLabel.BackgroundColor3 = Color3.new(0, 0, 0)  -- Cor preta
+        fpsLabel.BackgroundTransparency = 1  -- Transparência total
+        fpsLabel.TextColor3 = Color3.new(1, 1, 1)  -- Texto branco
+        fpsLabel.TextScaled = true  -- Escalar texto para caber
+        fpsLabel.Text = "FPS 0"  -- Texto inicial
+        fpsLabel.Parent = screenGui
+        fpsLabel.Active = true  -- Permite a detecção de eventos de entrada
+        fpsLabel.Draggable = true  -- Permite arrastar o TextLabel
+
+        -- FPS Counter
+        local runService = game:GetService("RunService")
+        local frameCount = 0
+        local lastUpdate = tick()
+
+        runService.RenderStepped:Connect(function()
+            frameCount = frameCount + 1  -- Incrementa o contador de frames
+            local now = tick()  -- Obtém o tempo atual
+            if now - lastUpdate >= 1 then  -- Se passou 1 segundo
+                fpsLabel.Text = "FPS " .. frameCount  -- Atualiza o texto do FPS
+                frameCount = 0  -- Reinicia a contagem
+                lastUpdate = now  -- Atualiza o tempo de referência
+            end
+        end)
+    end
+end
+
+-- Chama a função para ativar o FPS counter
+activateFPSCounter()
+
+-- Monitorar a destruição de OrionLib
+local OrionLib = game:GetService("ReplicatedStorage"):FindFirstChild("OrionLib") -- Altere o caminho se necessário
+if OrionLib then
+    OrionLib.Destroying:Connect(function()
+        if screenGui then
+            screenGui:Destroy()  -- Destrói o ScreenGui do FPS Counter
+        end
+    end)
+end
+
+
 
 
 
